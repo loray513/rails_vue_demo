@@ -1,5 +1,5 @@
-source 'https://rubygems.org'
-
+# source 'https://rubygems.org'
+source 'http://gems.ruby-china.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.1'
@@ -42,7 +42,8 @@ group :development, :test do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 end
-
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'vuejs-rails'
 # use sass compile
 gem 'bootstrap-sass', '~> 3.3', '>= 3.3.6'

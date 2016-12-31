@@ -32,10 +32,10 @@
                   <td>{{ load.delivery_at }}</td>
                   <td>{{ load.equipment_type }}</td>
                   <td>{{ load.load_type }}</td>
-                  <td>{{ load.weight }}%></td>
-                  <td>{{ load.price }}%></td>
+                  <td>{{ load.weight }}</td>
+                  <td>{{ load.price }}</td>
                   <td>{{ load.tel }}</td>
-              </tr>
+                </tr>
             </tbody>
           </table>
         </div><!-- /.box-body -->
@@ -43,6 +43,32 @@
     </div><!-- /.col -->
   </div><!-- /.row -->
 </section><!-- /.content -->
+<script type="text/javascript">
+  $(document).on('ready page:change', function() {
+    var load_table = new Vue({
+        el: '#loads-div',
+        data: {
+            loads: []
+        },
+        beforeCreate: function(){
+          this.$http.get('loads.json').then(function(response){
+              console.log(JSON.stringify(response.data));
+              this.loads = response.data;
+          }, function(response){
+              console.log("fail");
+              console.log(JSON.stringify(response));
+          });
+        }
+    });
+  });
+
+  Vue.component('load-row', {
+    template: '#load-row',
+    props: {
+      load: Object
+    }
+  });
+</script>
 <script type="text/x-template" id="load-row">
   <tr>
     <td>{{ load.origin }}</td>
@@ -51,8 +77,8 @@
     <td>{{ load.delivery_at }}</td>
     <td>{{ load.equipment_type) }}</td>
     <td>{{ load.load_type) }}</td>
-    <td>{{ load.weight }}%></td>
-    <td>{{ load.price }}%></td>
+    <td>{{ load.weight }}</td>
+    <td>{{ load.price }}</td>
     <td>{{ load.tel }}</td>
   </tr>
 </script>
