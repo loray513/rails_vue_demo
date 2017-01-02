@@ -4,3 +4,23 @@
 
 <%= link_to 'Show', @load %> |
 <%= link_to 'Back', loads_path %>
+<script type="text/javascript">
+$(document).on('ready page:change', function() {
+    console.log('11111111111111');
+    var load_form = new Vue({
+        el: '#load-form',
+        data: {
+            load: Object
+        },
+        beforeCreate: function(){
+          this.$http.get('<%= load_path(@load, format: :json)%>').then(function(response){
+              console.log(JSON.stringify(response.data));
+              this.load = response.data;
+          }, function(response){
+              console.log("fail");
+              console.log(JSON.stringify(response));
+          });
+        }
+    });
+});
+</script>

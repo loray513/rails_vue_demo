@@ -14,11 +14,19 @@ class LoadsController < ApplicationController
   # GET /loads/1
   # GET /loads/1.json
   def show
+    respond_to do |format|
+      format.html {}
+      format.json { render json: @load }
+    end
   end
 
   # GET /loads/new
   def new
     @load = Load.new
+    respond_to do |format|
+      format.html {}
+      format.json { render json: @load }
+    end
   end
 
   # GET /loads/1/edit
