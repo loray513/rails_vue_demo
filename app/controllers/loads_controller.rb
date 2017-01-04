@@ -23,10 +23,6 @@ class LoadsController < ApplicationController
   # GET /loads/new
   def new
     @load = Load.new
-    respond_to do |format|
-      format.html {}
-      format.json { render json: @load }
-    end
   end
 
   # GET /loads/1/edit
@@ -81,6 +77,6 @@ class LoadsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def load_params
-      params.fetch(:load, {})
+      params.require(:load).permit(:origin, :destination, :pick_up_at, :delivery_at, :equipment_type, :load_type, :weight, :weight_type, :price, :currency_type, :tel)
     end
 end

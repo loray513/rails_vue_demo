@@ -16,4 +16,5 @@
 //= require bootstrap-sprockets
 //= require vue
 //= require vue-resource
+//= require datepicker/bootstrap-datepicker
 //= require_tree .
