@@ -1,38 +1,47 @@
-<section class="content">
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="box box-main">
-        <div class="box-header">
-          <h2 class="box-title">
-            Listing Loads
-            <small><%= link_to 'New Loads', new_load_path, class: 'btn btn-primary btn-xs'%></small>
-          </h2>
-        </div><!-- /.box-header -->
-        <div class="box-body" id="loads-div">
-          <table class="table table-striped table-bordered table-advance table-hover">
-            <thead>
-              <tr>
-                <th>Origin</th>
-                <th>Destination</th>
-                <th>PickUp Date</th>
-                <th>Delivery Date</th>
-                <th>Equipment</th>
-                <th>Full/Partial</th>
-                <th>Weight</th>
-                <th>Price</th>
-                <th>Phone</th>
-              </tr>
-            </thead>
+<div id="loads">
+  <section class="content">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="box box-main">
+          <div v-if="!listMode">
+            <h1>New Load</h1>
 
-            <tbody>
-              <tr is="load-row" v-for="load in loads" :load="load"></tr>
-            </tbody>
-          </table>
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div><!-- /.col -->
-  </div><!-- /.row -->
-</section><!-- /.content -->
+            <%= render 'form' %>
+
+            <%= link_to 'Back', loads_path %>
+          </div>
+          <div v-else>
+            <div class="box-header">
+              <h2 class="box-title">
+                Listing Loads
+              </h2>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+              <table class="table table-striped table-bordered table-advance table-hover">
+                <thead>
+                  <tr>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>PickUp Date</th>
+                    <th>Delivery Date</th>
+                    <th>Equipment</th>
+                    <th>Full/Partial</th>
+                    <th>Weight</th>
+                    <th>Price</th>
+                    <th>Phone</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr is="load-row" v-for="load in loads" :load="load"></tr>
+                </tbody>
+              </table>
+            </div><!-- /.box-body -->
+          </div>
+        </div><!-- /.box -->
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </section><!-- /.content -->
+</div>
 <script type="text/x-template" id="load-row">
   <tr>
     <td>{{ load.origin }}</td>
@@ -44,34 +53,146 @@
     <td>{{ load.weight }}</td>
     <td>{{ load.price }}</td>
     <td>{{ load.tel }}</td>
+    <td><button @click="showLoad(load)">Show</button></td>
+    <td><button @click="editLoad(load)">Edit</button></td>
   </tr>
 </script>
 <script type="text/javascript">
   $(document).on('ready page:change', function() {
-    var load_table = new Vue({
-        el: '#loads-div',
+    //   Vue.http.interceptors.push({
+    //     request: function (request) {
+    //       Vue.http.headers.common['X-CSRF-Token'] = $('[name="csrf-token"]').attr('content');
+    //       return request;
+    //     },
+    //     response: function (response) {
+    //       return response;
+    //     }
+    // });
+
+    Vue.http.interceptors.push((request, next)  => {
+
+      // modify request
+     Vue.http.headers.common['X-CSRF-Token'] = $('[name="csrf-token"]').attr('content');
+
+      // continue to next interceptor
+      next((response) => {
+        response
+      });
+    });
+    var load_vue = new Vue({
+        el: '#loads',
+
         data: {
-            loads: []
+            listMode: false,
+            showMode: false,
+            loads: [],
+            load: {
+              origin: '',
+              destination: '',
+              pick_up_at: '',
+              delivery_at: '',
+              equipment_type: '',
+              load_type: '',
+              weight: '',
+              weight_type: '',
+              price: '',
+              currency_type: '',
+              tel: ''
+            },
+            equipment_types: [
+              {value: 0, key: 'Dry Van'},
+              {value: 1, key: 'Flatbed'},
+              {value: 2, key: 'Reefer'},
+              {value: 3, key: 'Other'}
+            ],
+            load_types: [
+              {value: 0, key: 'Full Truckload'},
+              {value: 1, key: 'Less Than Truckload'}
+            ],
+            weight_types: [
+              {value: 'lbs', key: 'lbs'},
+              {value: 'kg', key: 'kg'}
+            ],
+            currency_types: [
+              {value: '$', key: '$'},
+              {value: 'C$', key: 'C$'}
+            ]
         },
         beforeCreate: function(){
           this.$http.get('loads.json').then(function(response){
-              console.log(JSON.stringify(response.data));
               this.loads = response.data;
           }, function(response){
               console.log("fail");
               console.log(JSON.stringify(response));
           });
+        },
+        methods: {
+          postLoad: function () {
+            console.log("post load");
+            var that = this;
+            that.$http.post('loads.json', {load: that.load}).then(function(response){
+              that.loads.push(response.data);
+              that.listMode = true;
+            }, function(response){
+                console.log("fail");
+                console.log(JSON.stringify(response));
+            });
+          },
+
         }
+
     });
 
     Vue.component('load-row', {
       template: '#load-row',
       props: {
         load: Object
+      },
+      methods: {
+        showLoad: function(load){
+          console.log("show load");
+          var that = load_vue;
+          that.load = load;
+          that.showMode=true;
+          that.listMode=false;
+          // this.load=load
+        },
+        editLoad: function(load){
+          console.log("edit load");
+           var that = load_vue;
+          that.load = load;
+          that.showMode=false;
+          that.listMode=false;
+          // this.load=load
+        }
       }
+    });
+    init_datepicker(load_vue.load.pick_up_at, load_vue.load.delivery_at);
+    $("#pick_up_at").datepicker({
+      format: 'yyyy-mm-dd',
+      autoclose: true
+    });
+    $("#delivery_at").datepicker({
+      format: 'yyyy-mm-dd',
+      autoclose: true
     });
   });
 
-  
+  function init_datepicker(pick_up_at, delivery_at) {
+    console.log("init");
+    console.log(pick_up_at);
+    console.log(delivery_at);
+    $("#pick_up_at").datepicker({
+      format: 'yyyy-mm-dd',
+      autoclose: true
+    });
+    $("#pick_up_at").val(pick_up_at);
+    $("#delivery_at").datepicker({
+      format: 'yyyy-mm-dd',
+      autoclose: true
+    });
+     $("#delivery_at").val(delivery_at);
+  }
+
 </script>
 

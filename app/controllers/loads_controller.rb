@@ -4,10 +4,13 @@ class LoadsController < ApplicationController
   # GET /loads
   # GET /loads.json
   def index
-    @loads = Load.all
+
     respond_to do |format|
       format.html {}
-      format.json { render json: @loads }
+      format.json {
+        @loads = Load.all
+        render json: @loads
+      }
     end
   end
 
@@ -36,10 +39,10 @@ class LoadsController < ApplicationController
 
     respond_to do |format|
       if @load.save
-        format.html { redirect_to @load, notice: 'Load was successfully created.' }
-        format.json { render :show, status: :created, location: @load }
+        # format.html { redirect_to @load, notice: 'Load was successfully created.' }
+        format.json { render json: @load }
       else
-        format.html { render :new }
+        # format.html { render :new }
         format.json { render json: @load.errors, status: :unprocessable_entity }
       end
     end

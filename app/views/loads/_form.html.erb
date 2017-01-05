@@ -1,160 +1,99 @@
-<%= form_for(@load, html: {id: 'load-form'}) do |f| %>
-  <% if @load.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@load.errors.count, "error") %> prohibited this load from being saved:</h2>
 
-      <ul>
-      <% @load.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+<div class="row">
+  <div class="col-xs-6">
+    <div class="form-group">
+      <label>Origin</label>
+      <input type="text" class="form-control" v-model="load.origin" placeholder="Origin" v-if="!showMode" />
+      <div class="form-control"  v-else>{{load.origin}}</div>
     </div>
-  <% end %>
-    <div class="row">
-      <div class="col-xs-6">
-        <div class="form-group">
-          <label>Origin</label>
-          <input type="text" class="form-control" v-model="load.origin" name="load[origin]" placeholder="Origin" />
-        </div>
-      </div>
-      <div class="col-xs-6">
-        <div class="form-group">
-          <label>PickUp Date</label>
-          <input type="text" class="form-control" v-model="load.pick_up_at" name="load[pick_up_at]" id="pick_up_at" />
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-6">
-        <div class="form-group">
-          <label>Destination</label>
-          <input type="text" class="form-control" v-model="load.destination" name="load[destination]" placeholder="Destination" />
-        </div>
-      </div>
-      <div class="col-xs-6">
-        <div class="form-group">
-          <label>Delivery Date</label>
-          <input type="text" class="form-control" v-model="load.delivery_at" name="load[delivery_at]" id="delivery_at" />
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="form-group">
-          <label>Equipment</label>
-          <select  name="load[equipment_type]" class="form-control" v-model="load.equipment_type">
-            <option v-for="option in equipment_types" :value="option.value">{{option.key}}</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="form-group">
-          <label>Full/Partial</label>
-          <select  name="load[load_type]" class="form-control" v-model="load.load_type">
-            <option v-for="option in load_types" :value="option.value">{{option.key}}</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="form-group">
-          <label>Weight</label>
-          <div class="input-group">
-            <input type="text" class="form-control" v-model="load.weight" name="load[weight]" />
-            <div class="input-group-addon">
-              <select  name="load[weight_type]">
-                <option v-for="option in weight_types" :value="option.value">{{option.key}}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="form-group">
-          <label>Price</label>
-          <div class="input-group">
-            <input type="text" class="form-control" v-model="load.price" name="load[price]" />
-            <div class="input-group-addon">
-              <select  name="load[currency_type]">
-                <option v-for="option in currency_types" :value="option.value">{{option.key}}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="form-group">
-          <label>Phone</label>
-          <input type="text" class="form-control" v-model="load.tel" name="load[tel]"/>
-        </div>
-      </div>
-    </div>
-  <!-- <div class="form-group">
-    <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
-    <div class="col-sm-10">
-      <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
-    </div>
-  </div> -->
-  <div class="actions">
-    <button>Save</button>
   </div>
-<% end %>
-<script type="text/javascript">
-    $(document).on('ready page:change', function() {
-      console.log("init vue");
-      var load_form = new Vue({
-          el: '#load-form',
-          data: {
-            load: {
-              origin: '<%= @load.origin.to_s%>',
-              destination: '<%= @load.destination.to_s%>',
-              pick_up_at: '<%= @load.pick_up_at.to_s%>',
-              delivery_at: '<%= @load.delivery_at.to_s%>',
-              equipment_type: '<%= @load.equipment_type.to_i%>',
-              load_type: '<%= @load.load_type.to_i%>',
-              weight: '<%= @load.weight.to_s%>',
-              weight_type: '<%= @load.weight_id.to_s%>',
-              price: '<%= @load.price.to_s%>',
-              currency_type: '<%= @load.currency_id.to_s%>',
-              tel: '<%= @load.tel.to_s%>'
-            },
-            equipment_types: [
-              {value: 0, key: 'Dry Van'},
-              {value: 1, key: 'Flatbed'},
-              {value: 2, key: 'Reefer'},
-              {value: 3, key: 'Other'}
-            ],
-            load_types: [
-              {value: 0, key: 'Full Truckload'},
-              {value: 1, key: 'Less Than Truckload'}
-            ],
-            weight_types: [
-              {value: 'lbs', key: 'lbs'},
-              {value: 'kg', key: 'kg'}
-            ],
-            currency_types: [
-              {value: '$', key: '$'},
-              {value: 'C$', key: 'C$'}
-            ]
-        }
-      });
-
-    //datetimepicker
-    $("#pick_up_at").datepicker({
-      format: 'yyyy-mm-dd',
-      autoclose: true
-    });
-    $("#delivery_at").datepicker({
-      format: 'yyyy-mm-dd',
-      autoclose: true
-    });
-  });
-
-</script>
+  <div class="col-xs-6">
+    <div class="form-group">
+      <label>PickUp Date</label>
+      <input type="text" class="form-control" v-model="load.pick_up_at"  id="pick_up_at" v-if="!showMode"/>
+      <div class="form-control"  v-else>{{load.pick_up_at}}</div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-6">
+    <div class="form-group">
+      <label>Destination</label>
+      <input type="text" class="form-control" v-model="load.destination" placeholder="Destination" v-if="!showMode"/>
+      <div class="form-control"  v-else>{{load.destination}}</div>
+    </div>
+  </div>
+  <div class="col-xs-6">
+    <div class="form-group">
+      <label>Delivery Date</label>
+      <input type="text" class="form-control" v-model="load.delivery_at" id="delivery_at" v-if="!showMode"/>
+      <div class="form-control" v-else>{{load.delivery_at}}</div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="form-group">
+      <label>Equipment</label>
+      <select  class="form-control" v-model="load.equipment_type" v-if="!showMode">
+        <option v-for="option in equipment_types" :value="option.value">{{option.key}}</option>
+      </select>
+      <div class="form-control" v-else>{{load.equipment_type}}</div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="form-group">
+      <label>Full/Partial</label>
+      <select  class="form-control" v-model="load.load_type" v-if="!showMode">
+        <option v-for="option in load_types" :value="option.value">{{option.key}}</option>
+      </select>
+      <div class="form-control" v-else>{{load.load_type}}</div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="form-group">
+      <label>Weight</label>
+      <div class="input-group" v-if="!showMode">
+        <input type="text" class="form-control" v-model="load.weight"/>
+        <div class="input-group-addon" >
+          <select  v-model="load.weight_type" >
+            <option v-for="option in weight_types" :value="option.value">{{option.key}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-control" v-else>{{load.weight + load.weight_type}}</div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="form-group">
+      <label>Price</label>
+      <div class="input-group" v-if="!showMode">
+        <input type="text" class="form-control" v-model="load.price" />
+        <div class="input-group-addon">
+          <select  v-model="load.currency_type">
+            <option v-for="option in currency_types" :value="option.value">{{option.key}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-control" v-else>{{load.price + load.currency_type}}</div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="form-group">
+      <label>Phone</label>
+      <input type="text" class="form-control" v-model="load.tel" name="load[tel]" v-if="!showMode"/>
+      <div class="form-control" v-else>{{load.tel}}</div>
+    </div>
+  </div>
+</div>
+<div class="actions">
+<button @click="postLoad">Save</button>
+</div>
